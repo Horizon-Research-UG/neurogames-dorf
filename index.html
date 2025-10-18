@@ -709,6 +709,152 @@
             color: #FF4500;
         }
         
+        /* Einstellungen Modal */
+        .erd-einstellungen-modal {
+            display: none;
+            position: fixed;
+            z-index: 2100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.95);
+        }
+        
+        .erd-einstellungen-content {
+            position: relative;
+            margin: 3% auto;
+            width: 90%;
+            max-width: 700px;
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+        
+        .einstellungen-title {
+            color: #DEB887;
+            font-size: 32px;
+            margin-bottom: 30px;
+        }
+        
+        .einstellungen-gruppe {
+            margin: 30px 0;
+            text-align: left;
+        }
+        
+        .einstellungen-label {
+            color: #CD853F;
+            font-size: 18px;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 10px;
+        }
+        
+        .einstellungen-input {
+            background: rgba(222, 184, 135, 0.1);
+            border: 2px solid #8B4513;
+            border-radius: 10px;
+            padding: 15px;
+            font-size: 18px;
+            color: #DEB887;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        
+        .einstellungen-beschreibung {
+            color: #999;
+            font-size: 14px;
+            font-style: italic;
+        }
+        
+        .highscore-container {
+            margin: 30px 0;
+            text-align: left;
+        }
+        
+        .highscore-title {
+            color: #FFD700;
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .highscore-eintrag {
+            display: grid;
+            grid-template-columns: 50px 80px 100px 100px 1fr;
+            gap: 15px;
+            background: rgba(139, 69, 19, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+            border: 1px solid #8B4513;
+        }
+        
+        .rang {
+            color: #FFD700;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .punkte {
+            color: #32CD32;
+            font-weight: bold;
+        }
+        
+        .zeit {
+            color: #87CEEB;
+            font-weight: bold;
+        }
+        
+        .geschwindigkeit {
+            color: #FF6B6B;
+            font-weight: bold;
+        }
+        
+        .einstellungen {
+            color: #DEB887;
+            font-size: 12px;
+        }
+        
+        .spiel-stats {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 20px;
+            color: #DEB887;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .stat-item {
+            background: rgba(139, 69, 19, 0.3);
+            padding: 10px 15px;
+            border-radius: 10px;
+            border: 2px solid #8B4513;
+        }
+        
+        .hotkey-hinweise {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #888;
+            font-size: 14px;
+            text-align: center;
+        }
+        
+        .hotkey-hinweise span {
+            background: rgba(255,255,255,0.1);
+            padding: 5px 10px;
+            border-radius: 5px;
+            margin: 0 5px;
+            border: 1px solid #555;
+        }
+        
         @media (max-width: 768px) {
             .bild-mit-buttons {
                 flex-direction: column;
@@ -803,6 +949,32 @@
                 margin-top: 20px;
                 font-size: 18px;
                 padding: 15px 30px;
+            }
+            
+            .spiel-stats {
+                position: relative;
+                top: auto;
+                right: auto;
+                justify-content: center;
+                margin-bottom: 20px;
+            }
+            
+            .highscore-eintrag {
+                grid-template-columns: 40px 60px 80px 80px 1fr;
+                gap: 10px;
+                font-size: 14px;
+            }
+            
+            .einstellungen-input {
+                font-size: 16px;
+            }
+            
+            .hotkey-hinweise {
+                position: relative;
+                bottom: auto;
+                left: auto;
+                transform: none;
+                margin-top: 20px;
             }
         }
         
@@ -1060,32 +1232,117 @@
         // Erd-Addition Spiel Funktionen
         let aktuellerLevel = 1;
         let aktuelleAufgabe = {};
+        let spielStats = {
+            richtigeAntworten: 0,
+            startZeit: null,
+            aktuelleZeit: 0,
+            mana: 10,
+            brockenAnzahl: 2
+        };
+        let spielTimer = null;
         
         function starteErdAddition() {
             schliesseSpielmenu();
+            zeigeEinstellungsModal();
+        }
+        
+        function zeigeEinstellungsModal() {
+            document.getElementById('erdEinstellungenModal').style.display = 'block';
+            ladeHighscores();
+        }
+        
+        function starteSpielMitEinstellungen() {
+            const mana = parseInt(document.getElementById('manaInput').value) || 10;
+            const brockenAnzahl = parseInt(document.getElementById('brockenAnzahlInput').value) || 2;
+            
+            spielStats.mana = mana;
+            spielStats.brockenAnzahl = brockenAnzahl;
+            spielStats.richtigeAntworten = 0;
+            spielStats.startZeit = Date.now();
+            spielStats.aktuelleZeit = 0;
+            
+            document.getElementById('erdEinstellungenModal').style.display = 'none';
             document.getElementById('erdAdditionModal').style.display = 'block';
+            
+            // Timer starten
+            spielTimer = setInterval(aktualisiereTimer, 100);
+            
             starteLevel(1);
+        }
+        
+        function aktualisiereTimer() {
+            if (spielStats.startZeit) {
+                spielStats.aktuelleZeit = Date.now() - spielStats.startZeit;
+                const sekunden = (spielStats.aktuelleZeit / 1000).toFixed(1);
+                document.getElementById('timerAnzeige').textContent = `⏱️ ${sekunden}s`;
+            }
         }
         
         function starteLevel(level) {
             aktuellerLevel = level;
-            document.getElementById('erdLevel').textContent = `Level ${level}: Zwei Brocken werden zu einem großen Brocken`;
+            const beschreibung = spielStats.brockenAnzahl === 2 ? 
+                'Zwei Brocken werden zu einem großen Brocken' :
+                `${spielStats.brockenAnzahl} Brocken werden zu einem großen Brocken`;
             
-            // Zufällige Zahlen generieren (1-10 für Level 1)
-            const maxZahl = 10;
-            const a = Math.floor(Math.random() * maxZahl) + 1;
-            const b = Math.floor(Math.random() * maxZahl) + 1;
+            document.getElementById('erdLevel').textContent = `Level ${level}: ${beschreibung}`;
             
-            aktuelleAufgabe = { a: a, b: b, antwort: a + b };
+            // Zufällige Zahlen generieren basierend auf Mana
+            const zahlen = [];
+            let summe = 0;
             
-            // Brocken anzeigen
-            document.getElementById('brocken1').textContent = a;
-            document.getElementById('brocken2').textContent = b;
+            for (let i = 0; i < spielStats.brockenAnzahl; i++) {
+                const zahl = Math.floor(Math.random() * spielStats.mana) + 1;
+                zahlen.push(zahl);
+                summe += zahl;
+            }
+            
+            aktuelleAufgabe = { zahlen: zahlen, antwort: summe };
+            
+            // Brocken-Container aktualisieren
+            aktualisiereSpielAnzeige();
             
             // Eingabefeld leeren und Ergebnis zurücksetzen
             document.getElementById('erdAntwort').value = '';
             document.getElementById('erdErgebnis').innerHTML = '';
             document.getElementById('erdErgebnis').className = 'erd-result';
+            
+            // Focus auf Eingabe setzen
+            setTimeout(() => document.getElementById('erdAntwort').focus(), 100);
+        }
+        
+        function aktualisiereSpielAnzeige() {
+            const container = document.getElementById('brockenContainer');
+            container.innerHTML = '';
+            
+            // Brocken hinzufügen
+            aktuelleAufgabe.zahlen.forEach((zahl, index) => {
+                const brocken = document.createElement('div');
+                brocken.className = 'brocken';
+                brocken.textContent = zahl;
+                container.appendChild(brocken);
+                
+                // Plus-Zeichen zwischen Brocken (außer nach dem letzten)
+                if (index < aktuelleAufgabe.zahlen.length - 1) {
+                    const plus = document.createElement('div');
+                    plus.className = 'plus-zeichen';
+                    plus.textContent = '+';
+                    container.appendChild(plus);
+                }
+            });
+            
+            // Gleichheitszeichen und Fragezeichen
+            const equals = document.createElement('div');
+            equals.className = 'plus-zeichen';
+            equals.textContent = '=';
+            container.appendChild(equals);
+            
+            const question = document.createElement('div');
+            question.className = 'plus-zeichen';
+            question.textContent = '?';
+            container.appendChild(question);
+            
+            // Stats aktualisieren
+            document.getElementById('counterAnzeige').textContent = `✅ ${spielStats.richtigeAntworten}`;
         }
         
         function pruefeErdAntwort() {
@@ -1098,41 +1355,180 @@
                 return;
             }
             
+            const zeitpunkt = Date.now();
+            const aufgabenString = aktuelleAufgabe.zahlen.join(' + ');
+            
             if (eingabe === aktuelleAufgabe.antwort) {
+                spielStats.richtigeAntworten++;
+                
                 ergebnisDiv.innerHTML = `
-                    ✅ Richtig! ${aktuelleAufgabe.a} + ${aktuelleAufgabe.b} = ${aktuelleAufgabe.antwort}
+                    ✅ Richtig! ${aufgabenString} = ${aktuelleAufgabe.antwort}
                     <br>🎉 Die Brocken wurden erfolgreich verbunden!
                 `;
                 ergebnisDiv.className = 'erd-result erd-success';
                 
-                // Nach 3 Sekunden neue Aufgabe
+                // Log-Eintrag für richtige Antwort
+                loggeSpielEreignis({
+                    zeitpunkt: zeitpunkt,
+                    aufgabe: aufgabenString,
+                    antwort: eingabe,
+                    korrekt: true,
+                    spielZeit: spielStats.aktuelleZeit,
+                    counter: spielStats.richtigeAntworten
+                });
+                
+                // Nach 1.5 Sekunden neue Aufgabe (verkürzt für besseren Flow)
                 setTimeout(() => {
-                    starteLevel(aktuellerLevel);
-                }, 3000);
+                    naechsteAufgabe();
+                }, 1500);
                 
             } else {
                 ergebnisDiv.innerHTML = `
-                    ❌ Nicht ganz richtig. Versuchen Sie es noch einmal!
-                    <br>💡 Tipp: Zählen Sie die Brocken zusammen.
+                    ❌ Nicht ganz richtig. Die richtige Antwort ist ${aktuelleAufgabe.antwort}
+                    <br>💡 Tipp: ${aufgabenString} = ${aktuelleAufgabe.antwort}
                 `;
                 ergebnisDiv.className = 'erd-result erd-error';
+                
+                // Log-Eintrag für falsche Antwort
+                loggeSpielEreignis({
+                    zeitpunkt: zeitpunkt,
+                    aufgabe: aufgabenString,
+                    antwort: eingabe,
+                    korrekt: false,
+                    richtigeAntwort: aktuelleAufgabe.antwort,
+                    spielZeit: spielStats.aktuelleZeit,
+                    counter: spielStats.richtigeAntworten
+                });
             }
+        }
+        
+        function naechsteAufgabe() {
+            starteLevel(aktuellerLevel + 1);
         }
         
         function schliesseErdAddition() {
+            // Timer stoppen
+            if (spielTimer) {
+                clearInterval(spielTimer);
+                spielTimer = null;
+            }
+            
+            // Spiel-Session beenden und Highscore prüfen
+            if (spielStats.richtigeAntworten > 0) {
+                speichereHighscore();
+            }
+            
             document.getElementById('erdAdditionModal').style.display = 'none';
         }
         
+        function schliesseEinstellungen() {
+            document.getElementById('erdEinstellungenModal').style.display = 'none';
+        }
+        
+        // Logging-System
+        function loggeSpielEreignis(ereignis) {
+            const logs = JSON.parse(localStorage.getItem('erdAdditionLogs') || '[]');
+            logs.push({
+                ...ereignis,
+                session: Date.now(),
+                mana: spielStats.mana,
+                brockenAnzahl: spielStats.brockenAnzahl
+            });
+            
+            // Nur die letzten 1000 Einträge behalten
+            if (logs.length > 1000) {
+                logs.splice(0, logs.length - 1000);
+            }
+            
+            localStorage.setItem('erdAdditionLogs', JSON.stringify(logs));
+        }
+        
+        function speichereHighscore() {
+            const highscores = JSON.parse(localStorage.getItem('erdAdditionHighscores') || '[]');
+            const neuerScore = {
+                datum: new Date().toLocaleDateString('de-DE'),
+                zeit: new Date().toLocaleTimeString('de-DE'),
+                richtigeAntworten: spielStats.richtigeAntworten,
+                spielZeit: spielStats.aktuelleZeit,
+                mana: spielStats.mana,
+                brockenAnzahl: spielStats.brockenAnzahl,
+                geschwindigkeit: (spielStats.richtigeAntworten / (spielStats.aktuelleZeit / 1000)).toFixed(2)
+            };
+            
+            highscores.push(neuerScore);
+            
+            // Nach Punkten sortieren (höchste zuerst)
+            highscores.sort((a, b) => {
+                if (b.richtigeAntworten !== a.richtigeAntworten) {
+                    return b.richtigeAntworten - a.richtigeAntworten;
+                }
+                return a.spielZeit - b.spielZeit; // Bei gleichen Punkten: schnellere Zeit gewinnt
+            });
+            
+            // Nur Top 10 behalten
+            if (highscores.length > 10) {
+                highscores.splice(10);
+            }
+            
+            localStorage.setItem('erdAdditionHighscores', JSON.stringify(highscores));
+        }
+        
+        function ladeHighscores() {
+            const highscores = JSON.parse(localStorage.getItem('erdAdditionHighscores') || '[]');
+            const highscoreList = document.getElementById('highscoreList');
+            
+            if (highscores.length === 0) {
+                highscoreList.innerHTML = '<div style="color: #888; font-style: italic;">Noch keine Highscores vorhanden</div>';
+                return;
+            }
+            
+            highscoreList.innerHTML = highscores.slice(0, 5).map((score, index) => `
+                <div class="highscore-eintrag">
+                    <span class="rang">#${index + 1}</span>
+                    <span class="punkte">✅ ${score.richtigeAntworten}</span>
+                    <span class="zeit">⏱️ ${(score.spielZeit / 1000).toFixed(1)}s</span>
+                    <span class="geschwindigkeit">🚀 ${score.geschwindigkeit}/s</span>
+                    <span class="einstellungen">🌍${score.mana} 🪨${score.brockenAnzahl}</span>
+                </div>
+            `).join('');
+        }
+        
+        // Hotkey-System
+        document.addEventListener('keydown', function(e) {
+            // Nur wenn Erd-Addition Spiel aktiv ist
+            if (document.getElementById('erdAdditionModal').style.display === 'block') {
+                switch(e.key) {
+                    case 'n': // Nächste Aufgabe
+                    case 'N':
+                        e.preventDefault();
+                        naechsteAufgabe();
+                        break;
+                    case 'Enter':
+                        e.preventDefault();
+                        pruefeErdAntwort();
+                        break;
+                    case 'Escape':
+                        e.preventDefault();
+                        schliesseErdAddition();
+                        break;
+                }
+            } else if (document.getElementById('erdEinstellungenModal').style.display === 'block') {
+                switch(e.key) {
+                    case 'Enter':
+                        e.preventDefault();
+                        starteSpielMitEinstellungen();
+                        break;
+                    case 'Escape':
+                        e.preventDefault();
+                        schliesseEinstellungen();
+                        break;
+                }
+            }
+        });
+        
         // Enter-Taste für Eingabe
         document.addEventListener('DOMContentLoaded', function() {
-            const erdInput = document.getElementById('erdAntwort');
-            if (erdInput) {
-                erdInput.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter') {
-                        pruefeErdAntwort();
-                    }
-                });
-            }
+            // Event-Listener werden durch Hotkey-System abgedeckt
         });
     </script>
     
@@ -1178,16 +1574,58 @@
         </div>
     </div>
     
+    <!-- Erd-Addition Einstellungen Modal -->
+    <div id="erdEinstellungenModal" class="erd-einstellungen-modal">
+        <div class="erd-einstellungen-content">
+            <h2 class="einstellungen-title">⚙️ Erd-Addition Konfiguration</h2>
+            
+            <div class="einstellungen-gruppe">
+                <label class="einstellungen-label" for="manaInput">🔮 Mana (Schwierigkeitsgrad):</label>
+                <input type="number" id="manaInput" class="einstellungen-input" value="10" min="1" max="100" />
+                <div class="einstellungen-beschreibung">
+                    Bestimmt den Zahlenbereich (1 bis Mana). Höhere Werte = schwieriger
+                </div>
+            </div>
+            
+            <div class="einstellungen-gruppe">
+                <label class="einstellungen-label" for="brockenAnzahlInput">🪨 Anzahl der Brocken:</label>
+                <input type="number" id="brockenAnzahlInput" class="einstellungen-input" value="2" min="2" max="5" />
+                <div class="einstellungen-beschreibung">
+                    Wie viele Brocken sollen pro Aufgabe kombiniert werden?
+                </div>
+            </div>
+            
+            <div class="highscore-container">
+                <h3 class="highscore-title">🏆 Top 5 Highscores</h3>
+                <div id="highscoreList"></div>
+            </div>
+            
+            <div style="margin-top: 30px; text-align: center;">
+                <button class="erd-submit" onclick="starteSpielMitEinstellungen()">🚀 Spiel starten</button>
+                <button class="video-button close" onclick="schliesseEinstellungen()">❌ Abbrechen</button>
+            </div>
+            
+            <div class="hotkey-hinweise">
+                <strong>Hotkeys:</strong> <span>Enter</span> Starten | <span>ESC</span> Abbrechen
+            </div>
+        </div>
+    </div>
+    
     <!-- Erd-Addition Spiel Modal -->
     <div id="erdAdditionModal" class="erd-addition-modal">
         <div class="erd-addition-content">
+            <div class="spiel-stats">
+                <div class="stat-item" id="counterAnzeige">✅ 0</div>
+                <div class="stat-item" id="timerAnzeige">⏱️ 0.0s</div>
+            </div>
+            
             <h2 class="erd-title">🌍 Erd-Addition</h2>
             <p id="erdLevel" class="erd-level">Level 1: Zwei Brocken werden zu einem großen Brocken</p>
             
-            <div class="brocken-container">
-                <div class="brocken" id="brocken1">5</div>
+            <div id="brockenContainer" class="brocken-container">
+                <div class="brocken">5</div>
                 <div class="plus-zeichen">+</div>
-                <div class="brocken" id="brocken2">3</div>
+                <div class="brocken">3</div>
                 <div class="plus-zeichen">=</div>
                 <div class="plus-zeichen">?</div>
             </div>
@@ -1203,8 +1641,12 @@
             <div id="erdErgebnis" class="erd-result"></div>
             
             <div style="margin-top: 30px;">
-                <button class="video-button" onclick="starteLevel(1)">🔄 Neue Aufgabe</button>
+                <button class="video-button" onclick="naechsteAufgabe()">⏭️ Nächste Aufgabe</button>
                 <button class="video-button close" onclick="schliesseErdAddition()">❌ Beenden</button>
+            </div>
+            
+            <div class="hotkey-hinweise">
+                <strong>Hotkeys:</strong> <span>Enter</span> Antworten | <span>N</span> Nächste Aufgabe | <span>ESC</span> Beenden
             </div>
         </div>
     </div>
