@@ -1221,6 +1221,16 @@
                 margin: 10% auto;
                 padding: 30px 20px;
             }
+            
+            .video-button {
+                font-size: 14px;
+                padding: 12px 20px;
+            }
+            
+            .login-button {
+                font-size: 16px;
+                padding: 12px 20px;
+            }
         }
         
         @media (max-width: 480px) {
@@ -1308,7 +1318,10 @@
         <div class="modal-content">
             <div id="modal-title" class="modal-title"></div>
             <div id="modal-text" class="modal-text"></div>
-            <button class="modal-button" onclick="schliesseModal()">Verstanden</button>
+            <button class="modal-button" onclick="schliesseModal()">↩️ Zurück</button>
+            <div style="text-align: center; margin-top: 15px; color: #888; font-size: 14px;">
+                <strong>Hotkey:</strong> <span style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 3px;">ESC</span> Zurück
+            </div>
         </div>
     </div>
 
@@ -1940,9 +1953,28 @@
             `;
         }
         
-        // Hotkey-System
+        // Universelles ESC-Hotkey-System - immer einen Schritt zurück
         document.addEventListener('keydown', function(e) {
-            // Nur wenn Erd-Addition Spiel aktiv ist
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                // Prüfe welches Modal aktiv ist und führe entsprechende Zurück-Aktion aus
+                if (document.getElementById('erdAdditionModal').style.display === 'block') {
+                    zurueckZumSpielmenu();
+                } else if (document.getElementById('erdEinstellungenModal').style.display === 'block') {
+                    zurueckZumSpielmenueVonEinstellungen();
+                } else if (document.getElementById('spielMenuModal').style.display === 'block') {
+                    schliesseSpielmenu();
+                } else if (document.getElementById('loginModal').style.display === 'block') {
+                    schliesseLoginModal();
+                } else if (document.getElementById('videoModal').style.display === 'block') {
+                    schliesseVideo();
+                } else if (document.querySelector('.modal').style.display === 'block') {
+                    schliesseModal();
+                }
+                return;
+            }
+            
+            // Spezifische Hotkeys nur wenn Erd-Addition Spiel aktiv ist
             if (document.getElementById('erdAdditionModal').style.display === 'block') {
                 switch(e.key) {
                     case 'f': // Nächste Aufgabe (F-Taste)
@@ -1954,10 +1986,6 @@
                         e.preventDefault();
                         pruefeErdAntwort();
                         break;
-                    case 'Escape':
-                        e.preventDefault();
-                        zurueckZumSpielmenu(); // ESC führt zurück zum Spiel-Menü, nicht zum Hauptmenü
-                        break;
                 }
             } else if (document.getElementById('erdEinstellungenModal').style.display === 'block') {
                 switch(e.key) {
@@ -1965,9 +1993,12 @@
                         e.preventDefault();
                         starteSpielMitEinstellungen();
                         break;
-                    case 'Escape':
+                }
+            } else if (document.getElementById('loginModal').style.display === 'block') {
+                switch(e.key) {
+                    case 'Enter':
                         e.preventDefault();
-                        schliesseEinstellungen();
+                        anmelden();
                         break;
                 }
             }
@@ -2078,8 +2109,12 @@
                     🖥️ Vollbild
                 </button>
                 <button class="video-button close" onclick="schliesseVideo()">
-                    ❌ Schließen
+                    ↩️ Zurück
                 </button>
+            </div>
+            
+            <div style="text-align: center; margin-top: 15px; color: #888; font-size: 14px;">
+                <strong>Hotkey:</strong> <span style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 3px;">ESC</span> Zurück
             </div>
         </div>
     </div>
@@ -2099,8 +2134,12 @@
                 </button>
             </div>
             <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-                <button class="video-button" onclick="schliesseSpielmenu()">↩️ Hauptmenü</button>
+                <button class="video-button" onclick="schliesseSpielmenu()">↩️ Zurück zum Hauptmenü</button>
                 <button class="video-button" onclick="geheZumDorfVonSpielmenu()">🏘️ Zum Dorf</button>
+            </div>
+            
+            <div class="hotkey-hinweise">
+                <strong>Hotkeys:</strong> <span>ESC</span> Zurück zum Hauptmenü
             </div>
         </div>
     </div>
@@ -2142,13 +2181,13 @@
             
             <div style="margin-top: 30px; text-align: center;">
                 <button class="erd-submit" onclick="starteSpielMitEinstellungen()">🚀 Spiel starten</button>
-                <button class="video-button" onclick="zurueckZumSpielmenueVonEinstellungen()">↩️ Zurück</button>
+                <button class="video-button" onclick="zurueckZumSpielmenueVonEinstellungen()">↩️ Zurück zum Spiel-Menü</button>
                 <button class="video-button" onclick="geheZumDorfVonEinstellungen()">🏘️ Zum Dorf</button>
                 <button class="video-button close" onclick="schliesseEinstellungen()">❌ Hauptmenü</button>
             </div>
             
             <div class="hotkey-hinweise">
-                <strong>Hotkeys:</strong> <span>Enter</span> Starten | <span>ESC</span> Abbrechen
+                <strong>Hotkeys:</strong> <span>Enter</span> Starten | <span>ESC</span> Zurück zum Spiel-Menü
             </div>
         </div>
     </div>
@@ -2213,12 +2252,13 @@
             <div>
                 <button class="login-button" onclick="anmelden()">🚀 Anmelden</button>
                 <button class="login-button" onclick="schliesseLoginModal()" 
-                        style="background: linear-gradient(45deg, #666, #888);">❌ Abbrechen</button>
+                        style="background: linear-gradient(45deg, #666, #888);">↩️ Zurück</button>
             </div>
             
             <div style="margin-top: 20px; font-size: 12px; color: #666; line-height: 1.4;">
                 💾 Deine Daten werden lokal in deinem Browser gespeichert<br>
-                🔒 Keine Passwörter erforderlich - nur Benutzername
+                🔒 Keine Passwörter erforderlich - nur Benutzername<br>
+                <strong>Hotkey:</strong> <span style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 3px;">ESC</span> Zurück
             </div>
         </div>
     </div>
