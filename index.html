@@ -577,6 +577,17 @@
             background: linear-gradient(45deg, #CD853F, #DEB887);
         }
         
+        .spiel-button.naechstes-level {
+            background: linear-gradient(45deg, #FF6B35, #F7931E);
+            border: 2px solid #FF4500;
+        }
+        
+        .spiel-button.naechstes-level:hover {
+            background: linear-gradient(45deg, #FF8C42, #FFB347);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(255, 107, 53, 0.4);
+        }
+        
         /* Erd-Addition Spiel Styles */
         .erd-addition-modal {
             display: none;
@@ -940,11 +951,33 @@
             margin: 3% auto;
             width: 90%;
             max-width: 700px;
+            max-height: 85vh;
             background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
             padding: 40px;
             border-radius: 20px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.5);
             text-align: center;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #8B4513 #2a2a2a;
+        }
+        
+        .erd-einstellungen-content::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .erd-einstellungen-content::-webkit-scrollbar-track {
+            background: #2a2a2a;
+            border-radius: 4px;
+        }
+        
+        .erd-einstellungen-content::-webkit-scrollbar-thumb {
+            background: #8B4513;
+            border-radius: 4px;
+        }
+        
+        .erd-einstellungen-content::-webkit-scrollbar-thumb:hover {
+            background: #A0522D;
         }
         
         .einstellungen-title {
@@ -1539,6 +1572,35 @@
             zeigeEinstellungsModal();
         }
         
+        function starteNaechstesLevel() {
+            // Prüfe Login-Status
+            if (!aktuellerBenutzer.isLoggedIn) {
+                zeigeLoginModal();
+                return;
+            }
+            
+            // Setze erweiterte Einstellungen für nächstes Level
+            document.getElementById('manaInput').value = 25; // Höhere Schwierigkeit
+            document.getElementById('brockenAnzahlInput').value = 4; // Mehr Brocken
+            
+            // Starte direkt das Spiel mit erweiterten Einstellungen
+            schliesseSpielmenu();
+            
+            spielStats.mana = 25;
+            spielStats.brockenAnzahl = 4;
+            
+            zeigeNachricht('🚀 Nächstes Level!', 
+                '🎯 Erweiterte Herausforderung gestartet!\n\n' +
+                '⚡ Mana: 25 (erweiterte Schwierigkeit)\n' +
+                '🪨 Brocken: 4 pro Aufgabe\n\n' +
+                '🏆 Viel Erfolg beim nächsten Level!', 
+                function() {
+                    document.getElementById('erdEinstellungenModal').style.display = 'none';
+                    starteSpiel();
+                }
+            );
+        }
+        
         function zeigeEinstellungsModal() {
             // Prüfe Login-Status
             if (!aktuellerBenutzer.isLoggedIn) {
@@ -2126,6 +2188,10 @@
                 <button class="spiel-button erd-addition" onclick="starteErdAddition()">
                     🌍 Erd-Addition
                     <br><small>Mathematik-Abenteuer mit Brocken</small>
+                </button>
+                <button class="spiel-button naechstes-level" onclick="starteNaechstesLevel()">
+                    🚀 Nächstes Level
+                    <br><small>Erweiterte Herausforderungen</small>
                 </button>
                 <button class="spiel-button" onclick="zeigeNachricht('🎯 Coming Soon', '⚔️ Weitere Spiele werden bald verfügbar sein!\n\n🎮 Geplante Abenteuer:\n• Wasser-Subtraktion\n• Feuer-Multiplikation\n• Luft-Division\n• Mystische Rätsel')">
                     🎯 Weitere Abenteuer
