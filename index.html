@@ -703,6 +703,47 @@
         
         .erd-success {
             color: #32CD32;
+            animation: successPulse 0.6s ease-in-out;
+        }
+        
+        @keyframes successPulse {
+            0% { transform: scale(1); }
+            25% { transform: scale(1.1) rotateZ(2deg); }
+            50% { transform: scale(1.2) rotateZ(-2deg); }
+            75% { transform: scale(1.1) rotateZ(1deg); }
+            100% { transform: scale(1); }
+        }
+        
+        .brocken-success {
+            animation: brockenExplode 0.8s ease-out;
+        }
+        
+        @keyframes brockenExplode {
+            0% { transform: scale(1); background: linear-gradient(45deg, #8B4513, #A0522D); }
+            25% { transform: scale(1.2); background: linear-gradient(45deg, #FFD700, #FFA500); box-shadow: 0 0 30px #FFD700; }
+            50% { transform: scale(1.3); background: linear-gradient(45deg, #32CD32, #7FFF00); box-shadow: 0 0 40px #32CD32; }
+            75% { transform: scale(1.1); background: linear-gradient(45deg, #32CD32, #7FFF00); }
+            100% { transform: scale(1); background: linear-gradient(45deg, #8B4513, #A0522D); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        }
+        
+        .score-anzeige {
+            position: absolute;
+            top: 80px;
+            right: 20px;
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            color: #000;
+            padding: 15px 20px;
+            border-radius: 15px;
+            font-size: 20px;
+            font-weight: bold;
+            border: 3px solid #FFD700;
+            box-shadow: 0 10px 25px rgba(255, 215, 0, 0.3);
+            animation: scoreGlow 2s infinite alternate;
+        }
+        
+        @keyframes scoreGlow {
+            0% { box-shadow: 0 10px 25px rgba(255, 215, 0, 0.3); }
+            100% { box-shadow: 0 15px 35px rgba(255, 215, 0, 0.6); }
         }
         
         .erd-error {
@@ -783,7 +824,7 @@
         
         .highscore-eintrag {
             display: grid;
-            grid-template-columns: 50px 80px 100px 100px 1fr;
+            grid-template-columns: 50px 90px 80px 100px 1fr;
             gap: 15px;
             background: rgba(139, 69, 19, 0.2);
             padding: 15px;
@@ -961,8 +1002,16 @@
                 margin-bottom: 20px;
             }
             
+            .score-anzeige {
+                position: relative;
+                top: auto;
+                right: auto;
+                margin: 0 auto 20px auto;
+                font-size: 18px;
+            }
+            
             .highscore-eintrag {
-                grid-template-columns: 40px 60px 80px 80px 1fr;
+                grid-template-columns: 40px 70px 60px 80px 1fr;
                 gap: 10px;
                 font-size: 14px;
             }
@@ -1239,7 +1288,8 @@
             startZeit: null,
             aktuelleZeit: 0,
             mana: 10,
-            brockenAnzahl: 2
+            brockenAnzahl: 2,
+            aktuellerScore: 0
         };
         let spielTimer = null;
         
@@ -1260,6 +1310,7 @@
             spielStats.mana = mana;
             spielStats.brockenAnzahl = brockenAnzahl;
             spielStats.richtigeAntworten = 0;
+            spielStats.aktuellerScore = 0;
             spielStats.startZeit = Date.now();
             spielStats.aktuelleZeit = 0;
             
@@ -1277,6 +1328,22 @@
                 spielStats.aktuelleZeit = Date.now() - spielStats.startZeit;
                 const sekunden = (spielStats.aktuelleZeit / 1000).toFixed(1);
                 document.getElementById('timerAnzeige').textContent = `⏱️ ${sekunden}s`;
+                
+                // Score berechnen und aktualisieren
+                berechneUndZeigeScore();
+            }
+        }
+        
+        function berechneUndZeigeScore() {
+            if (spielStats.richtigeAntworten > 0 && spielStats.aktuelleZeit > 0) {
+                // Formel: (Mana × Brocken × RichtigeAntworten²) / Zeit / 100
+                const zeitInSekunden = spielStats.aktuelleZeit / 1000;
+                const rawScore = (spielStats.mana * spielStats.brockenAnzahl * Math.pow(spielStats.richtigeAntworten, 2)) / zeitInSekunden / 100;
+                spielStats.aktuellerScore = Math.round(rawScore);
+                
+                document.getElementById('scoreAnzeige').textContent = `🏆 ${spielStats.aktuellerScore}`;
+            } else {
+                document.getElementById('scoreAnzeige').textContent = `🏆 0`;
             }
         }
         
@@ -1345,6 +1412,7 @@
             
             // Stats aktualisieren
             document.getElementById('counterAnzeige').textContent = `✅ ${spielStats.richtigeAntworten}`;
+            berechneUndZeigeScore();
         }
         
         function pruefeErdAntwort() {
@@ -1363,6 +1431,10 @@
             if (eingabe === aktuelleAufgabe.antwort) {
                 spielStats.richtigeAntworten++;
                 
+                // SOFORTIGE Animation der Brocken
+                const brocken = document.querySelectorAll('.brocken');
+                brocken.forEach(b => b.classList.add('brocken-success'));
+                
                 ergebnisDiv.innerHTML = `
                     ✅ Richtig! ${aufgabenString} = ${aktuelleAufgabe.antwort}
                     <br>🎉 Die Brocken wurden erfolgreich verbunden!
@@ -1376,10 +1448,14 @@
                     antwort: eingabe,
                     korrekt: true,
                     spielZeit: spielStats.aktuelleZeit,
-                    counter: spielStats.richtigeAntworten
+                    counter: spielStats.richtigeAntworten,
+                    score: spielStats.aktuellerScore
                 });
                 
-                // KEIN automatischer Timeout mehr - Benutzer entscheidet mit F-Taste oder Button
+                // Direkt nach Animation (1 Sekunde) zur nächsten Aufgabe
+                setTimeout(() => {
+                    naechsteAufgabe();
+                }, 1000);
                 
             } else {
                 ergebnisDiv.innerHTML = `
@@ -1396,7 +1472,8 @@
                     korrekt: false,
                     richtigeAntwort: aktuelleAufgabe.antwort,
                     spielZeit: spielStats.aktuelleZeit,
-                    counter: spielStats.richtigeAntworten
+                    counter: spielStats.richtigeAntworten,
+                    score: spielStats.aktuellerScore
                 });
             }
         }
@@ -1449,6 +1526,7 @@
                 zeit: new Date().toLocaleTimeString('de-DE'),
                 richtigeAntworten: spielStats.richtigeAntworten,
                 spielZeit: spielStats.aktuelleZeit,
+                score: spielStats.aktuellerScore,
                 mana: spielStats.mana,
                 brockenAnzahl: spielStats.brockenAnzahl,
                 geschwindigkeit: (spielStats.richtigeAntworten / (spielStats.aktuelleZeit / 1000)).toFixed(2)
@@ -1458,6 +1536,9 @@
             
             // Nach Punkten sortieren (höchste zuerst)
             highscores.sort((a, b) => {
+                if (b.score !== a.score) {
+                    return b.score - a.score;  // Zuerst nach Score sortieren
+                }
                 if (b.richtigeAntworten !== a.richtigeAntworten) {
                     return b.richtigeAntworten - a.richtigeAntworten;
                 }
@@ -1484,9 +1565,9 @@
             highscoreList.innerHTML = highscores.slice(0, 5).map((score, index) => `
                 <div class="highscore-eintrag">
                     <span class="rang">#${index + 1}</span>
+                    <span class="punkte">🏆 ${score.score || 0}</span>
                     <span class="punkte">✅ ${score.richtigeAntworten}</span>
                     <span class="zeit">⏱️ ${(score.spielZeit / 1000).toFixed(1)}s</span>
-                    <span class="geschwindigkeit">🚀 ${score.geschwindigkeit}/s</span>
                     <span class="einstellungen">🌍${score.mana} 🪨${score.brockenAnzahl}</span>
                 </div>
             `).join('');
@@ -1617,6 +1698,8 @@
                 <div class="stat-item" id="counterAnzeige">✅ 0</div>
                 <div class="stat-item" id="timerAnzeige">⏱️ 0.0s</div>
             </div>
+            
+            <div class="score-anzeige" id="scoreAnzeige">🏆 0</div>
             
             <h2 class="erd-title">🌍 Erd-Addition</h2>
             <p id="erdLevel" class="erd-level">Level 1: Zwei Brocken werden zu einem großen Brocken</p>
