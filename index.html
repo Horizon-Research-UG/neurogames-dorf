@@ -947,8 +947,10 @@
             .erd-submit {
                 margin-left: 0;
                 margin-top: 20px;
-                font-size: 18px;
-                padding: 15px 30px;
+                font-size: 16px;
+                padding: 12px 20px;
+                flex: 1;
+                min-width: 140px;
             }
             
             .spiel-stats {
@@ -1377,10 +1379,7 @@
                     counter: spielStats.richtigeAntworten
                 });
                 
-                // Nach 1.5 Sekunden neue Aufgabe (verkürzt für besseren Flow)
-                setTimeout(() => {
-                    naechsteAufgabe();
-                }, 1500);
+                // KEIN automatischer Timeout mehr - Benutzer entscheidet mit F-Taste oder Button
                 
             } else {
                 ergebnisDiv.innerHTML = `
@@ -1498,8 +1497,8 @@
             // Nur wenn Erd-Addition Spiel aktiv ist
             if (document.getElementById('erdAdditionModal').style.display === 'block') {
                 switch(e.key) {
-                    case 'n': // Nächste Aufgabe
-                    case 'N':
+                    case 'f': // Nächste Aufgabe (F-Taste)
+                    case 'F':
                         e.preventDefault();
                         naechsteAufgabe();
                         break;
@@ -1635,18 +1634,20 @@
                     🪨 Verbinden Sie die Brocken! Wie groß ist der neue Brocken?
                 </p>
                 <input type="number" id="erdAntwort" class="erd-input" placeholder="Ihre Antwort..." />
-                <button class="erd-submit" onclick="pruefeErdAntwort()">✨ Verbinden</button>
+                <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-top: 20px;">
+                    <button class="erd-submit" onclick="pruefeErdAntwort()">✨ Verbinden</button>
+                    <button class="erd-submit" onclick="naechsteAufgabe()" style="background: linear-gradient(45deg, #4169E1, #6495ED);">⏭️ Nächste Aufgabe</button>
+                </div>
             </div>
             
             <div id="erdErgebnis" class="erd-result"></div>
             
             <div style="margin-top: 30px;">
-                <button class="video-button" onclick="naechsteAufgabe()">⏭️ Nächste Aufgabe</button>
                 <button class="video-button close" onclick="schliesseErdAddition()">❌ Beenden</button>
             </div>
             
             <div class="hotkey-hinweise">
-                <strong>Hotkeys:</strong> <span>Enter</span> Antworten | <span>N</span> Nächste Aufgabe | <span>ESC</span> Beenden
+                <strong>Hotkeys:</strong> <span>Enter</span> Antworten | <span>F</span> Nächste Aufgabe | <span>ESC</span> Beenden
             </div>
         </div>
     </div>
