@@ -1485,6 +1485,23 @@
         // Spiel-Menü Funktionen
         function schliesseSpielmenu() {
             document.getElementById('spielMenuModal').style.display = 'none';
+            // Zurück zum Hauptmenü
+            zeigeHauptmenu();
+        }
+        
+        function geheZumDorfVonSpielmenu() {
+            document.getElementById('spielMenuModal').style.display = 'none';
+            zeigeDorf();
+        }
+        
+        function zurueckZumSpielmenueVonEinstellungen() {
+            document.getElementById('erdEinstellungenModal').style.display = 'none';
+            document.getElementById('spielMenuModal').style.display = 'block';
+        }
+        
+        function geheZumDorfVonEinstellungen() {
+            document.getElementById('erdEinstellungenModal').style.display = 'none';
+            zeigeDorf();
         }
         
         // Erd-Addition Spiel Funktionen
@@ -1713,10 +1730,48 @@
             }
             
             document.getElementById('erdAdditionModal').style.display = 'none';
+            // Zurück zum Hauptmenü
+            zeigeHauptmenu();
+        }
+        
+        function zurueckZumSpielmenu() {
+            // Timer stoppen
+            if (spielTimer) {
+                clearInterval(spielTimer);
+                spielTimer = null;
+            }
+            
+            // Spiel-Session beenden und Ergebnis speichern
+            if (spielStats.richtigeAntworten > 0) {
+                speichereSpielErgebnis();
+            }
+            
+            document.getElementById('erdAdditionModal').style.display = 'none';
+            // Bleibe im Spiel-Menü - das ist der gewünschte neue Workflow
+            document.getElementById('spielMenuModal').style.display = 'block';
+        }
+        
+        function geheZumDorf() {
+            // Timer stoppen
+            if (spielTimer) {
+                clearInterval(spielTimer);
+                spielTimer = null;
+            }
+            
+            // Spiel-Session beenden und Ergebnis speichern
+            if (spielStats.richtigeAntworten > 0) {
+                speichereSpielErgebnis();
+            }
+            
+            document.getElementById('erdAdditionModal').style.display = 'none';
+            // Gehe direkt zum Dorf (Bild-Seite)
+            zeigeDorf();
         }
         
         function schliesseEinstellungen() {
             document.getElementById('erdEinstellungenModal').style.display = 'none';
+            // Zurück zum Hauptmenü
+            zeigeHauptmenu();
         }
         
         // Logging-System
@@ -1901,7 +1956,7 @@
                         break;
                     case 'Escape':
                         e.preventDefault();
-                        schliesseErdAddition();
+                        zurueckZumSpielmenu(); // ESC führt zurück zum Spiel-Menü, nicht zum Hauptmenü
                         break;
                 }
             } else if (document.getElementById('erdEinstellungenModal').style.display === 'block') {
@@ -2043,9 +2098,10 @@
                     <br><small>Coming Soon...</small>
                 </button>
             </div>
-            <button class="video-button close" onclick="schliesseSpielmenu()">
-                ❌ Zurück
-            </button>
+            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                <button class="video-button" onclick="schliesseSpielmenu()">↩️ Hauptmenü</button>
+                <button class="video-button" onclick="geheZumDorfVonSpielmenu()">🏘️ Zum Dorf</button>
+            </div>
         </div>
     </div>
     
@@ -2086,7 +2142,9 @@
             
             <div style="margin-top: 30px; text-align: center;">
                 <button class="erd-submit" onclick="starteSpielMitEinstellungen()">🚀 Spiel starten</button>
-                <button class="video-button close" onclick="schliesseEinstellungen()">❌ Abbrechen</button>
+                <button class="video-button" onclick="zurueckZumSpielmenueVonEinstellungen()">↩️ Zurück</button>
+                <button class="video-button" onclick="geheZumDorfVonEinstellungen()">🏘️ Zum Dorf</button>
+                <button class="video-button close" onclick="schliesseEinstellungen()">❌ Hauptmenü</button>
             </div>
             
             <div class="hotkey-hinweise">
@@ -2130,11 +2188,13 @@
             <div id="erdErgebnis" class="erd-result"></div>
             
             <div style="margin-top: 30px;">
-                <button class="video-button close" onclick="schliesseErdAddition()">❌ Beenden</button>
+                <button class="video-button" onclick="zurueckZumSpielmenu()">↩️ Zurück zum Spiel-Menü</button>
+                <button class="video-button" onclick="geheZumDorf()">🏘️ Zum Dorf</button>
+                <button class="video-button close" onclick="schliesseErdAddition()">❌ Hauptmenü</button>
             </div>
             
             <div class="hotkey-hinweise">
-                <strong>Hotkeys:</strong> <span>Enter</span> Antworten | <span>F</span> Nächste Aufgabe | <span>ESC</span> Beenden
+                <strong>Hotkeys:</strong> <span>Enter</span> Antworten | <span>F</span> Nächste Aufgabe | <span>ESC</span> Zurück zum Spiel-Menü
             </div>
         </div>
     </div>
