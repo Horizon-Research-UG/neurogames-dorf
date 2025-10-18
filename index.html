@@ -750,6 +750,179 @@
             color: #FF4500;
         }
         
+        /* Login Modal */
+        .login-modal {
+            display: none;
+            position: fixed;
+            z-index: 2200;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.95);
+        }
+        
+        .login-content {
+            position: relative;
+            margin: 15% auto;
+            width: 90%;
+            max-width: 400px;
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            text-align: center;
+            border: 3px solid #4169E1;
+        }
+        
+        .login-title {
+            color: #4169E1;
+            font-size: 28px;
+            margin-bottom: 30px;
+        }
+        
+        .login-input {
+            background: rgba(65, 105, 225, 0.1);
+            border: 2px solid #4169E1;
+            border-radius: 10px;
+            padding: 15px;
+            font-size: 18px;
+            color: #fff;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        
+        .login-input:focus {
+            outline: none;
+            border-color: #6495ED;
+            background: rgba(65, 105, 225, 0.2);
+        }
+        
+        .login-button {
+            background: linear-gradient(45deg, #4169E1, #6495ED);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+        
+        .login-button:hover {
+            background: linear-gradient(45deg, #6495ED, #87CEEB);
+            transform: translateY(-2px);
+        }
+        
+        .user-info {
+            display: none;
+            background: rgba(65, 105, 225, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px;
+            border: 2px solid #4169E1;
+        }
+        
+        .current-user {
+            color: #6495ED;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        /* Spielstatistiken */
+        .spiel-listen-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 30px 0;
+        }
+        
+        .spiel-liste {
+            background: rgba(139, 69, 19, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid #8B4513;
+        }
+        
+        .liste-titel {
+            color: #CD853F;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .spiel-eintrag {
+            display: grid;
+            grid-template-columns: 1fr 80px 60px 80px 80px;
+            gap: 10px;
+            background: rgba(139, 69, 19, 0.2);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            align-items: center;
+            border: 1px solid #8B4513;
+            font-size: 14px;
+        }
+        
+        .spiel-datum {
+            color: #DEB887;
+            font-size: 12px;
+        }
+        
+        .spiel-score {
+            color: #FFD700;
+            font-weight: bold;
+        }
+        
+        .spiel-antworten {
+            color: #32CD32;
+            font-weight: bold;
+        }
+        
+        .spiel-zeit {
+            color: #87CEEB;
+            font-weight: bold;
+        }
+        
+        .spiel-settings {
+            color: #DEB887;
+            font-size: 11px;
+        }
+        
+        .benutzer-stats {
+            background: rgba(65, 105, 225, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid #4169E1;
+            margin: 20px 0;
+        }
+        
+        .benutzer-stats h4 {
+            color: #6495ED;
+            font-size: 20px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .stat-box {
+            background: rgba(65, 105, 225, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            color: #87CEEB;
+            font-weight: bold;
+            border: 1px solid #4169E1;
+        }
+        
         /* Einstellungen Modal */
         .erd-einstellungen-modal {
             display: none;
@@ -1027,6 +1200,27 @@
                 transform: none;
                 margin-top: 20px;
             }
+            
+            .spiel-listen-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .spiel-eintrag {
+                grid-template-columns: 1fr 60px 50px 70px;
+                gap: 8px;
+                font-size: 12px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .login-content {
+                margin: 10% auto;
+                padding: 30px 20px;
+            }
         }
         
         @media (max-width: 480px) {
@@ -1059,6 +1253,19 @@
         
         <div id="hauptmenu" class="menu">
             <h2>=== NeuroGames Hauptmenü ===</h2>
+            
+            <!-- Login/User Info -->
+            <div class="user-info" id="userInfo">
+                <div class="current-user">👤 Angemeldet als: <span id="currentUsername"></span></div>
+                <button class="login-button" onclick="abmelden()">🚪 Abmelden</button>
+            </div>
+            
+            <div style="text-align: center; margin: 20px;">
+                <button id="loginButton" class="login-button" onclick="zeigeLoginModal()">
+                    👤 Anmelden für Statistiken
+                </button>
+            </div>
+            
             <button class="menu-button menu-btn-1" onclick="zeigeSpielmenu()">🎮 Spielen</button>
             <button class="menu-button menu-btn-2" onclick="zeigeDorf()">🏘️ Dorf besuchen</button>
             <button class="menu-button menu-btn-3" onclick="zeigeNachricht('Einstellungen', '⚙️ Einstellungen werden geladen...\n\nVerfügbare Optionen:\n• Grafik-Qualität\n• Sound-Einstellungen\n• Steuerung anpassen')">⚙️ Einstellungen</button>
@@ -1291,6 +1498,11 @@
             brockenAnzahl: 2,
             aktuellerScore: 0
         };
+        
+        let aktuellerBenutzer = {
+            name: null,
+            isLoggedIn: false
+        };
         let spielTimer = null;
         
         function starteErdAddition() {
@@ -1299,8 +1511,14 @@
         }
         
         function zeigeEinstellungsModal() {
+            // Prüfe Login-Status
+            if (!aktuellerBenutzer.isLoggedIn) {
+                zeigeLoginModal();
+                return;
+            }
+            
             document.getElementById('erdEinstellungenModal').style.display = 'block';
-            ladeHighscores();
+            ladeAlleSpielStatistiken();
         }
         
         function starteSpielMitEinstellungen() {
@@ -1341,9 +1559,9 @@
                 const rawScore = (spielStats.mana * spielStats.brockenAnzahl * Math.pow(spielStats.richtigeAntworten, 2)) / zeitInSekunden / 100;
                 spielStats.aktuellerScore = Math.round(rawScore);
                 
-                document.getElementById('scoreAnzeige').textContent = `🏆 ${spielStats.aktuellerScore}`;
+                document.getElementById('scoreAnzeige').textContent = `🏆 ${spielStats.aktuellerScore} Punkte`;
             } else {
-                document.getElementById('scoreAnzeige').textContent = `🏆 0`;
+                document.getElementById('scoreAnzeige').textContent = `🏆 0 Punkte`;
             }
         }
         
@@ -1489,9 +1707,9 @@
                 spielTimer = null;
             }
             
-            // Spiel-Session beenden und Highscore prüfen
+            // Spiel-Session beenden und Ergebnis speichern
             if (spielStats.richtigeAntworten > 0) {
-                speichereHighscore();
+                speichereSpielErgebnis();
             }
             
             document.getElementById('erdAdditionModal').style.display = 'none';
@@ -1519,11 +1737,14 @@
             localStorage.setItem('erdAdditionLogs', JSON.stringify(logs));
         }
         
-        function speichereHighscore() {
-            const highscores = JSON.parse(localStorage.getItem('erdAdditionHighscores') || '[]');
-            const neuerScore = {
+        function speichereSpielErgebnis() {
+            if (!aktuellerBenutzer.isLoggedIn) return;
+            
+            const neuesSpiel = {
+                benutzer: aktuellerBenutzer.name,
                 datum: new Date().toLocaleDateString('de-DE'),
                 zeit: new Date().toLocaleTimeString('de-DE'),
+                timestamp: Date.now(),
                 richtigeAntworten: spielStats.richtigeAntworten,
                 spielZeit: spielStats.aktuelleZeit,
                 score: spielStats.aktuellerScore,
@@ -1532,45 +1753,136 @@
                 geschwindigkeit: (spielStats.richtigeAntworten / (spielStats.aktuelleZeit / 1000)).toFixed(2)
             };
             
-            highscores.push(neuerScore);
+            // Zu beiden Listen hinzufügen
+            speichereInLetzteSpiele(neuesSpiel);
+            speichereInBesteSpiele(neuesSpiel);
+            aktualisiereBenutzerStats(neuesSpiel);
+        }
+        
+        function speichereInLetzteSpiele(spiel) {
+            const benutzerKey = `letzteSpiele_${aktuellerBenutzer.name}`;
+            const letzteSpiele = JSON.parse(localStorage.getItem(benutzerKey) || '[]');
             
-            // Nach Punkten sortieren (höchste zuerst)
-            highscores.sort((a, b) => {
+            letzteSpiele.unshift(spiel); // Am Anfang hinzufügen
+            
+            // Nur die letzten 3 behalten
+            if (letzteSpiele.length > 3) {
+                letzteSpiele.splice(3);
+            }
+            
+            localStorage.setItem(benutzerKey, JSON.stringify(letzteSpiele));
+        }
+        
+        function speichereInBesteSpiele(spiel) {
+            const benutzerKey = `besteSpiele_${aktuellerBenutzer.name}`;
+            const besteSpiele = JSON.parse(localStorage.getItem(benutzerKey) || '[]');
+            
+            besteSpiele.push(spiel);
+            
+            // Nach Score sortieren (höchste zuerst)
+            besteSpiele.sort((a, b) => {
                 if (b.score !== a.score) {
-                    return b.score - a.score;  // Zuerst nach Score sortieren
+                    return b.score - a.score;
                 }
                 if (b.richtigeAntworten !== a.richtigeAntworten) {
                     return b.richtigeAntworten - a.richtigeAntworten;
                 }
-                return a.spielZeit - b.spielZeit; // Bei gleichen Punkten: schnellere Zeit gewinnt
+                return a.spielZeit - b.spielZeit;
             });
             
-            // Nur Top 10 behalten
-            if (highscores.length > 10) {
-                highscores.splice(10);
+            // Nur Top 5 behalten
+            if (besteSpiele.length > 5) {
+                besteSpiele.splice(5);
             }
             
-            localStorage.setItem('erdAdditionHighscores', JSON.stringify(highscores));
+            localStorage.setItem(benutzerKey, JSON.stringify(besteSpiele));
         }
         
-        function ladeHighscores() {
-            const highscores = JSON.parse(localStorage.getItem('erdAdditionHighscores') || '[]');
-            const highscoreList = document.getElementById('highscoreList');
+        function aktualisiereBenutzerStats(spiel) {
+            const statsKey = `benutzerStats_${aktuellerBenutzer.name}`;
+            const stats = JSON.parse(localStorage.getItem(statsKey) || '{}');
             
-            if (highscores.length === 0) {
-                highscoreList.innerHTML = '<div style="color: #888; font-style: italic;">Noch keine Highscores vorhanden</div>';
+            stats.gesamtSpiele = (stats.gesamtSpiele || 0) + 1;
+            stats.gesamtScore = (stats.gesamtScore || 0) + spiel.score;
+            stats.gesamtRichtigeAntworten = (stats.gesamtRichtigeAntworten || 0) + spiel.richtigeAntworten;
+            stats.gesamtSpielzeit = (stats.gesamtSpielzeit || 0) + spiel.spielZeit;
+            stats.bestScore = Math.max(stats.bestScore || 0, spiel.score);
+            stats.durchschnittScore = Math.round(stats.gesamtScore / stats.gesamtSpiele);
+            
+            localStorage.setItem(statsKey, JSON.stringify(stats));
+        }
+        
+        function ladeAlleSpielStatistiken() {
+            if (!aktuellerBenutzer.isLoggedIn) return;
+            
+            ladeLetzteSpiele();
+            ladeBesteSpiele();
+            ladeBenutzerStats();
+        }
+        
+        function ladeLetzteSpiele() {
+            const benutzerKey = `letzteSpiele_${aktuellerBenutzer.name}`;
+            const letzteSpiele = JSON.parse(localStorage.getItem(benutzerKey) || '[]');
+            const container = document.getElementById('letzteSpieleList');
+            
+            if (letzteSpiele.length === 0) {
+                container.innerHTML = '<div style="color: #888; font-style: italic;">Noch keine Spiele gespielt</div>';
                 return;
             }
             
-            highscoreList.innerHTML = highscores.slice(0, 5).map((score, index) => `
-                <div class="highscore-eintrag">
-                    <span class="rang">#${index + 1}</span>
-                    <span class="punkte">🏆 ${score.score || 0}</span>
-                    <span class="punkte">✅ ${score.richtigeAntworten}</span>
-                    <span class="zeit">⏱️ ${(score.spielZeit / 1000).toFixed(1)}s</span>
-                    <span class="einstellungen">🌍${score.mana} 🪨${score.brockenAnzahl}</span>
+            container.innerHTML = letzteSpiele.map((spiel, index) => `
+                <div class="spiel-eintrag">
+                    <span class="spiel-datum">${spiel.datum} ${spiel.zeit}</span>
+                    <span class="spiel-score">🏆 ${spiel.score}</span>
+                    <span class="spiel-antworten">✅ ${spiel.richtigeAntworten}</span>
+                    <span class="spiel-zeit">⏱️ ${(spiel.spielZeit / 1000).toFixed(1)}s</span>
+                    <span class="spiel-settings">🌍${spiel.mana} 🪨${spiel.brockenAnzahl}</span>
                 </div>
             `).join('');
+        }
+        
+        function ladeBesteSpiele() {
+            const benutzerKey = `besteSpiele_${aktuellerBenutzer.name}`;
+            const besteSpiele = JSON.parse(localStorage.getItem(benutzerKey) || '[]');
+            const container = document.getElementById('besteSpieleList');
+            
+            if (besteSpiele.length === 0) {
+                container.innerHTML = '<div style="color: #888; font-style: italic;">Noch keine Bestleistungen</div>';
+                return;
+            }
+            
+            container.innerHTML = besteSpiele.map((spiel, index) => `
+                <div class="highscore-eintrag">
+                    <span class="rang">#${index + 1}</span>
+                    <span class="punkte">🏆 ${spiel.score}</span>
+                    <span class="punkte">✅ ${spiel.richtigeAntworten}</span>
+                    <span class="zeit">⏱️ ${(spiel.spielZeit / 1000).toFixed(1)}s</span>
+                    <span class="einstellungen">${spiel.datum}</span>
+                </div>
+            `).join('');
+        }
+        
+        function ladeBenutzerStats() {
+            const statsKey = `benutzerStats_${aktuellerBenutzer.name}`;
+            const stats = JSON.parse(localStorage.getItem(statsKey) || '{}');
+            const container = document.getElementById('benutzerStatsContainer');
+            
+            const gesamtSpiele = stats.gesamtSpiele || 0;
+            const durchschnittScore = stats.durchschnittScore || 0;
+            const bestScore = stats.bestScore || 0;
+            const gesamtSpielzeitSek = Math.round((stats.gesamtSpielzeit || 0) / 1000);
+            
+            container.innerHTML = `
+                <div class="benutzer-stats">
+                    <h4>📊 ${aktuellerBenutzer.name}'s Statistiken</h4>
+                    <div class="stats-grid">
+                        <div class="stat-box">🎮 ${gesamtSpiele} Spiele</div>
+                        <div class="stat-box">🏆 ${bestScore} Rekord</div>
+                        <div class="stat-box">📈 ⌀${durchschnittScore} Ø-Score</div>
+                        <div class="stat-box">⏱️ ${gesamtSpielzeitSek}s gespielt</div>
+                    </div>
+                </div>
+            `;
         }
         
         // Hotkey-System
@@ -1606,9 +1918,92 @@
             }
         });
         
-        // Enter-Taste für Eingabe
+        // Account-System Funktionen
+        function zeigeLoginModal() {
+            document.getElementById('loginModal').style.display = 'block';
+            document.getElementById('loginUsername').focus();
+        }
+        
+        function schliesseLoginModal() {
+            document.getElementById('loginModal').style.display = 'none';
+        }
+        
+        function anmelden() {
+            const username = document.getElementById('loginUsername').value.trim();
+            
+            if (username.length < 3) {
+                alert('Benutzername muss mindestens 3 Zeichen lang sein!');
+                return;
+            }
+            
+            // Speichere den angemeldeten Benutzer
+            aktuellerBenutzer.name = username;
+            aktuellerBenutzer.isLoggedIn = true;
+            localStorage.setItem('aktuellerBenutzer', JSON.stringify(aktuellerBenutzer));
+            
+            // Erstelle Benutzer-Account falls nicht vorhanden
+            erstelleBenutzerAccountFallsNoetig(username);
+            
+            schliesseLoginModal();
+            zeigeEinstellungsModal();
+            
+            // Aktualisiere UI
+            aktualisiereLoginAnzeigen();
+        }
+        
+        function abmelden() {
+            aktuellerBenutzer.name = null;
+            aktuellerBenutzer.isLoggedIn = false;
+            localStorage.removeItem('aktuellerBenutzer');
+            
+            // Aktualisiere UI
+            aktualisiereLoginAnzeigen();
+            
+            // Schließe alle Spiel-Modals
+            document.getElementById('erdEinstellungenModal').style.display = 'none';
+            document.getElementById('erdAdditionModal').style.display = 'none';
+        }
+        
+        function erstelleBenutzerAccountFallsNoetig(username) {
+            const accountKey = `account_${username}`;
+            const existierenderAccount = localStorage.getItem(accountKey);
+            
+            if (!existierenderAccount) {
+                const neuerAccount = {
+                    username: username,
+                    erstelltAm: new Date().toISOString(),
+                    letzterLogin: new Date().toISOString()
+                };
+                localStorage.setItem(accountKey, JSON.stringify(neuerAccount));
+            } else {
+                // Aktualisiere letzten Login
+                const account = JSON.parse(existierenderAccount);
+                account.letzterLogin = new Date().toISOString();
+                localStorage.setItem(accountKey, JSON.stringify(account));
+            }
+        }
+        
+        function aktualisiereLoginAnzeigen() {
+            const loginBtn = document.getElementById('loginButton');
+            const userInfo = document.getElementById('userInfo');
+            
+            if (aktuellerBenutzer.isLoggedIn) {
+                loginBtn.style.display = 'none';
+                userInfo.style.display = 'block';
+                document.getElementById('currentUsername').textContent = aktuellerBenutzer.name;
+            } else {
+                loginBtn.style.display = 'block';
+                userInfo.style.display = 'none';
+            }
+        }
+        
+        // Beim Laden der Seite prüfen ob Benutzer eingeloggt ist
         document.addEventListener('DOMContentLoaded', function() {
-            // Event-Listener werden durch Hotkey-System abgedeckt
+            const gespeicherterBenutzer = localStorage.getItem('aktuellerBenutzer');
+            if (gespeicherterBenutzer) {
+                aktuellerBenutzer = JSON.parse(gespeicherterBenutzer);
+            }
+            aktualisiereLoginAnzeigen();
         });
     </script>
     
@@ -1675,9 +2070,18 @@
                 </div>
             </div>
             
-            <div class="highscore-container">
-                <h3 class="highscore-title">🏆 Top 5 Highscores</h3>
-                <div id="highscoreList"></div>
+            <div id="benutzerStatsContainer"></div>
+            
+            <div class="spiel-listen-container">
+                <div class="spiel-liste">
+                    <h3 class="liste-titel">📅 Letzte 3 Spiele</h3>
+                    <div id="letzteSpieleList"></div>
+                </div>
+                
+                <div class="spiel-liste">
+                    <h3 class="liste-titel">🏆 Beste 5 Spiele</h3>
+                    <div id="besteSpieleList"></div>
+                </div>
             </div>
             
             <div style="margin-top: 30px; text-align: center;">
@@ -1731,6 +2135,30 @@
             
             <div class="hotkey-hinweise">
                 <strong>Hotkeys:</strong> <span>Enter</span> Antworten | <span>F</span> Nächste Aufgabe | <span>ESC</span> Beenden
+            </div>
+        </div>
+    </div>
+    
+    <!-- Login Modal -->
+    <div id="loginModal" class="login-modal">
+        <div class="login-content">
+            <h2 class="login-title">👤 Anmelden</h2>
+            <p style="color: #888; margin-bottom: 20px;">
+                Erstelle einen Account um deine Statistiken zu speichern!
+            </p>
+            
+            <input type="text" id="loginUsername" class="login-input" 
+                   placeholder="Benutzername eingeben..." maxlength="20" />
+            
+            <div>
+                <button class="login-button" onclick="anmelden()">🚀 Anmelden</button>
+                <button class="login-button" onclick="schliesseLoginModal()" 
+                        style="background: linear-gradient(45deg, #666, #888);">❌ Abbrechen</button>
+            </div>
+            
+            <div style="margin-top: 20px; font-size: 12px; color: #666; line-height: 1.4;">
+                💾 Deine Daten werden lokal in deinem Browser gespeichert<br>
+                🔒 Keine Passwörter erforderlich - nur Benutzername
             </div>
         </div>
     </div>
